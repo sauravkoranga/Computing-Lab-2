@@ -1,0 +1,11 @@
+Node: 566	Friends in US: 24	Overall Friends: 95
+Node: 603	Friends in US: 21	Overall Friends: 89
+Node: 386	Friends in US: 20	Overall Friends: 81
+Node: 48	Friends in US: 16	Overall Friends: 79
+Node: 187	Friends in US: 16	Overall Friends: 45
+Node: 354	Friends in US: 15	Overall Friends: 75
+Node: 72	Friends in US: 15	Overall Friends: 71
+Node: 452	Friends in US: 15	Overall Friends: 69
+Node: 160	Friends in US: 15	Overall Friends: 47
+Node: 529	Friends in US: 15	Overall Friends: 46
+cost: 6970

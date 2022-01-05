@@ -1,0 +1,201 @@
+--------------------------------------------------A--------------------------------------------
+
+----3----
+
+select p1.name, p2.name from Player p1, Player p2, Registration r1, Registration r2, PlayedIn pi where p1.pid = r1.pid AND p2.pid = r2.pid AND r1.registrnum = r2.registrnum AND r1.registrnum = pi.registrnum AND r1.pid != r2.pid AND p1.pid < p2.pid AND pi.tid in (select tid from Tournament t where t.ttype = 'Doubles' AND t.name = 'Wimbledon');
+
+----4----
+
+select p.name, t.name from Registration rroger, Registration r2, Matches
+m, MatchResults mr, Player roger, Player p, Tournament t where roger.name = 'Roger Federer' and roger.pid = rroger.pid and p.pid = r2.pid and ((m.registrnum1 = rroger.registrnum and r2.registrnum = m.registrnum2) or (m.registrnum1 = r2.registrnum and rroger.registrnum = m.registrnum2)) and mr.mid = m.mid and t.tid = m.tid and t.ttype = 'Singles' and t.numrounds = m.round and mr.winner = rroger.registrnum;
+
+----5----
+
+select w.name WinnerName, piw.seed WinnerSeed, l.name LoserName, pil.seed LoserSeed from Player w, Player l, PlayedIn piw, PlayedIn pil, Registration rw, Registration rl, Matches m, Tournament t, MatchResults mr where w.pid = rw.pid
+and l.pid = rl.pid and ((rw.registrnum = m.registrnum1 and rl.registrnum = m.registrnum2) or (rw.registrnum = m.registrnum2 and rl.registrnum = m.registrnum1))
+and t.ttype = 'Singles' and t.numrounds = m.round and mr.winner = rw.registrnum
+and piw.seed is not null and pil.seed is not null and t.tid = m.tid and m.mid =
+mr.mid and rw.registrnum != rl.registrnum and rw.registrnum = piw.registrnum and rl.registrnum = pil.registrnum;
+
+----6----
+
+select distinct p.name from Player p, Registration r1, Registration r2, PlayedIn pi1, PlayedIn pi2, CountryCodes c, Tournament t1, Tournament t2 where p.pid = r1.pid and p.pid = r2.pid and r1.registrnum = pi1.registrnum and r2.registrnum = pi2.registrnum and p.ccode = c.code and c.country = 'United States' and pi1.tid = t1.tid and pi2.tid = t2.tid and r1.registrnum != r2.registrnum;
+
+----7----
+
+ select t.name, t.ttype, t.startdate, t.enddate, t.numrounds from Tournament t where t.numrounds > 5;
+
+ -----8-------
+ 
+select p1.name winner1, p2.name winner2, p3.name loser1, p4.name loser2,
+matchinfo.name tournament_name, matchinfo.year year, matchinfo.round roundnum
+from Player p1, Registration r1, PlayedIn pi1,
+Player p2, Registration r2, PlayedIn pi2,
+Player p3, Registration r3, PlayedIn pi3,
+Player p4, Registration r4, PlayedIn pi4,
+(select t.name, year(str_to_date(t.startdate, "%d-%M-%Y")) year, m.round,
+m.registrnum1 rn1, m.registrnum2 rn2, mr.winner
+from Tournament t, Matches m, RetiredMatch rm, MatchResults mr
+where t.tid = m.tid AND m.mid = rm.mid AND t.ttype = 'Doubles' AND
+mr.mid = m.mid) matchinfo
+where p1.pid < p2.pid AND p3.pid < p4.pid AND
+p1.pid = r1.pid AND r1.registrnum = pi1.registrnum AND
+r1.registrnum = matchinfo.winner AND
+p2.pid = r2.pid AND r2.registrnum = pi2.registrnum AND
+r2.registrnum = matchinfo.winner AND
+p3.pid = r3.pid AND r3.registrnum = pi3.registrnum AND
+r3.registrnum != matchinfo.winner AND
+(r3.registrnum = matchinfo.rn1 OR r3.registrnum = matchinfo.rn2) AND
+p4.pid = r4.pid AND r4.registrnum = pi4.registrnum AND
+r4.registrnum != matchinfo.winner AND
+(r4.registrnum = matchinfo.rn1 OR r4.registrnum = matchinfo.rn2);
+
+----
+
+select w1.name, w2.name, l1.name, l2.name, t.name, year(str_to_date(t.startdate, "%d-%M-%Y")) year, m.round
+from Player w1, Player w2, Player l1, Player l2, Registration r1, Registration r2, Registration r3, Registration r4, Tournament t, Matches m, MatchResults mr, RetiredMatch rm, PlayedIn pi1, PlayedIn pi2, PlayedIn pi3, PlayedIn pi4 
+where w1.pid = r1.pid and w2.pid = r2.pid and l1.pid = r3.pid and l2.pid = r4.pid and r1.registrnum = pi1.registrnum and r2.registrnum = pi2.registrnum and r3.registrnum = pi3.registrnum and r4.registrnum = pi4.registrnum and pi1.tid = t.tid and  pi2.tid = t.tid and pi3.tid = t.tid and pi4.tid = t.tid and m.tid = t.tid and t.ttype = 'Doubles' and rm.mid = m.mid and mr.mid = m.mid and r1.registrnum = r2.registrnum and r3.registrnum = r4.registrnum and mr.winner = r2.registrnum and ((m.registrnum1 = r1.registrnum and m.registrnum2 = r3.registrnum) or (m.registrnum1 = r3.registrnum and m.registrnum2 = r1.registrnum));
+
+----9----
+
+select w.name winner, l.name loser, t.name, m.round from Player w, Player l, Registration rw, Registration rl, Tournament t, PlayedIn piw, PlayedIn pil, RetiredMatch rm, MatchResults mr, Matches m where w.pid = rw.pid and l.pid = rl.pid and rw.registrnum = piw.registrnum and rl.registrnum = pil.registrnum and mr.winner = rw.registrnum and ((m.registrnum1 = rw.registrnum and m.registrnum2 = rl.registrnum) or ( m.registrnum1 = rl.registrnum and m.registrnum2 = rw.registrnum)) and rm.mid = m.mid and mr.mid = m.mid and m.tid = t.tid and t.ttype = 'Singles' and mr.numsets > 1 and rl.registrnum != mr.winner;
+
+----10----
+
+select t.name, t.ttype, t.surface, t.numrounds from Tournament t order by  t.numrounds desc;
+
+----11----
+
+select t.name, t.ttype, t.enddate - t.startdate length from Tournament t
+where (t.enddate-t.startdate >7);
+
+----12----
+
+select distinct p.name from Player p, Tournament t, Registration r, PlayedIn pi, CountryCodes c where p.pid = r.pid and r.registrnum = pi.registrnum and
+pi.tid = t.tid and c.country = 'Germany' and c.code = p.ccode and t.name = 'Australian Open' and t.ttype = 'Singles';
+
+
+
+
+// year(str_to_date(t.startdate, "%d-%M-%Y")) year
+
+
+
+---------------------------------------------B----------------------------------------------
+
+----1----
+
+select t.name, w.name, ss1.winnergames Set1Win, ss1.losergames Set1Lose, ss2.winnergames Set2Win, ss2.losergames Set2Lose, ss3.winnergames Set3Win, ss3.losergames Set3Lose from Player w, Tournament t, Registration r, MatchResults mr, Matches m, SetScore ss1, SetScore ss2, SetScore ss3 where w.pid = r.pid and m.mid = mr.mid and m.tid = t.tid and mr.winner = r.registrnum and m.round >= t.numrounds-2 and mr.numsets=3 and t.ttype = 'Singles' and ss1.mid = m.mid and ss1.setnum = 1 and ss2.mid = m.mid and ss2.setnum = 2 and ss3.mid = m.mid and ss3.setnum = 3;
+
+----2----
+
+select distinct p1.name, p2.name, p3.name
+from Player p1, Player p2, Player p3, Registration r1a, Registration r1b,
+Registration r2a, Registration r2b, Registration r3a, Registration r3b
+where r1a.pid = r1b.pid AND r2a.pid = r2b.pid AND r3a.pid = r3b.pid AND
+r1a.pid = p1.pid AND r2a.pid = p2.pid AND r3a.pid = p3.pid AND
+r1a.registrnum = r2b.registrnum AND
+r2a.registrnum = r3b.registrnum AND
+r3a.registrnum = r1b.registrnum AND
+p1.pid < p2.pid AND p2.pid < p3.pid;
+
+----3----
+
+select distinct p1.name, p2.name
+from Matches m_singles, Tournament t_singles,
+Matches m_doubles, Tournament t_doubles,
+Player p1, Registration r1s, Registration r1d,
+Player p2, Registration r2s, Registration r2d
+where m_singles.tid = t_singles.tid AND t_singles.ttype = 'Singles' AND m_doubles.tid = t_doubles.tid AND t_doubles.ttype = 'Doubles' AND r1s.registrnum = m_singles.registrnum1 AND p1.pid = r1s.pid AND r2s.registrnum = m_singles.registrnum2 AND p2.pid = r2s.pid AND (r1d.registrnum = m_doubles.registrnum1 OR
+r1d.registrnum = m_doubles.registrnum2) AND
+(r2d.registrnum = m_doubles.registrnum2 OR
+r2d.registrnum = m_doubles.registrnum1) AND
+p1.pid = r1d.pid AND p2.pid = r2d.pid AND p1.pid != p2.pid;
+
+----4----
+
+select t.name, year(str_to_date(t.startdate, "%d-%M-%Y")) year, t.numrounds and l.name
+from Tournament t, Player w, Player l, Registration rw, Registration rl, MatchResults mr, Matches m, SetScore ss
+where w.pid = rw.pid, l.pid = rl.pid and w.name = 'James Blake' and mr.winner = rw.registrnum and t.ttype = 'Singles' and mr.mid = m.mid and ss.mid = m.mid and ((m.registrnum1 = rw.registrnum and m.registrnum2 = rl.registrnum) or ( m.registrnum1 = rl.registrnum and m.registrnum2 = rw.registrnum)) and ((ss.winnergames = 6 and ss.losergames = 0) or (ss.winnergames = 0 and ss.losergames = 6));
+--
+select winning_matches.tname,
+m.round, loser.name
+from Player loser, Registration rloser, Matches m,
+(select t.name tname, m.mid
+from Player blake, Registration r, Matches m, Tournament t,
+MatchResults mr, SetScore ss
+where blake.name = 'James Blake' AND r.pid = blake.pid AND
+r.registrnum = mr.winner AND mr.mid = m.mid AND
+t.tid = m.tid AND ss.mid = m.mid AND t.ttype = 'Singles' AND
+((ss.winnergames = 0 AND ss.losergames = 6) OR
+(ss.winnergames = 6 AND ss.losergames = 0))) winning_matches
+where winning_matches.mid = m.mid AND rloser.pid = loser.pid AND
+(rloser.registrnum = m.registrnum1 OR
+rloser.registrnum = m.registrnum2) AND
+loser.name != 'James Blake';
+
+----5----
+
+select distinct pairs.name2
+from Player p, Registration r, PlayedIn pi, Tournament t,
+(select p1.pid pid1, p2.name name2
+from Player p1, Player p2,
+Registration r1, Registration r2,
+PlayedIn pi, Tournament t
+where
+p1.pid != p2.pid AND
+p1.pid = r1.pid AND r1.registrnum = pi.registrnum AND
+p2.pid = r2.pid AND r2.registrnum = pi.registrnum AND
+pi.tid = t.tid AND t.ttype = 'Doubles') pairs
+where
+p.pid = pairs.pid1 AND r.pid = p.pid AND pi.registrnum = r.registrnum AND
+t.tid = pi.tid AND t.ttype = 'Singles' AND pi.seed is not null;
+
+----6----
+
+select p.name, count(r.registrnum) registered_tournaments
+from Player p, Registration r
+where p.pid not in
+(select count1.pid
+from
+(select p.pid pid, count(r.registrnum) numreg
+from Registration r, Player p
+where r.pid = p.pid
+group by p.pid) count1,
+(select p.pid, count(r.registrnum) numreg
+from Registration r, Player p
+where r.pid = p.pid
+group by p.pid) count2
+where count1.numreg < count2.numreg)
+AND p.pid = r.pid
+group by p.name;
+
+----7----
+
+select distinct p.name
+from CountryCodes cc, Player p, Registration r,
+Player haas, Registration haas_r, Matches m
+where haas.name = 'Tommy Haas' AND haas_r.pid = haas.pid AND
+(haas_r.registrnum = m.registrnum1 OR
+haas_r.registrnum = m.registrnum2) AND
+(r.registrnum = m.registrnum1 OR r.registrnum = m.registrnum2) AND
+r.pid = p.pid AND p.pid != haas.pid AND p.ccode = cc.code AND
+(cc.country = 'United States' OR cc.country = 'Chile' OR
+cc.country = 'Russia');
+
+----8----
+
+select distinct p.name
+from Player p, Registration wr, Registration usr, Registration aur, Tournament wt, Tournament ust, Tournament aut,
+Matches wm, Matches usm, Matches aum
+where p.pid = wr.pid and p.pid = usr.pid and p.pid = aur.pid and wt.name = 'Wimbledon' and ust.name = 'US Open' and aut.name = 'Australian Open' and
+ wm.tid = wt.tid and usm.tid = ust.tid and aum.tid = aut.tid and 
+(wr.registrnum = wm.registrnum1 or
+wr.registrnum = wm.registrnum2) and
+(usr.registrnum = usm.registrnum1 or
+usr.registrnum = usm.registrnum2) and
+(aur.registrnum = aum.registrnum1 or
+aur.registrnum = aum.registrnum2) and
+wm.round >= wt.numrounds - 2 and
+usm.round >= ust.numrounds - 2 and
+aum.round >= aut.numrounds - 2;
